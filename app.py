@@ -35,10 +35,6 @@ def run_download(job_id, url):
 
     cmd = [
         "yt-dlp",
-        f"--config-location={CONF_FILE}",
-        "--newline",
-        "-o", f"{DOWNLOAD_DIR}/%(artist)s/%(title)s.%(ext)s",
-        "--download-archive", f"{CONFIG_DIR}/downloadarchive.txt",
         url
     ]
 
