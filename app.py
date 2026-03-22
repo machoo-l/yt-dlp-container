@@ -143,10 +143,45 @@ def get_archive():
     path = f"{CONFIG_DIR}/downloadarchive.txt"
     try:
         with open(path) as f:
-            lines = f.readlines()
-        return jsonify({"count": len(lines), "entries": [l.strip() for l in lines[-50:]]})
+            lines = [l.strip() for l in f.readlines() if l.strip()]
+        entries = []
+        for line in lines:
+            parts = line.split(" ", 2)
+            source = parts[0] if len(parts) > 0 else ""
+            video_id = parts[1] if len(parts) > 1 else ""
+            title = parts[2] if len(parts) > 2 else ""
+            entries.append({"raw": line, "source": source, "id": video_id, "title": title})
+        return jsonify({"count": len(entries), "entries": entries})
     except FileNotFoundError:
         return jsonify({"count": 0, "entries": []})
+
+
+@app.route("/archive/delete", methods=["POST"])
+def delete_archive_entry():
+    data = request.get_json()
+    raw = (data or {}).get("raw", "").strip()
+    if not raw:
+        return jsonify({"error": "raw entry required"}), 400
+    path = f"{CONFIG_DIR}/downloadarchive.txt"
+    try:
+        with open(path) as f:
+            lines = f.readlines()
+        new_lines = [l for l in lines if l.strip() != raw]
+        with open(path, "w") as f:
+            f.writelines(new_lines)
+        return jsonify({"success": True, "removed": len(lines) - len(new_lines)})
+    except FileNotFoundError:
+        return jsonify({"error": "archive not found"}), 404
+
+
+@app.route("/archive/clear", methods=["POST"])
+def clear_archive():
+    path = f"{CONFIG_DIR}/downloadarchive.txt"
+    try:
+        open(path, "w").close()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":

@@ -1,496 +1,890 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PULL</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #080808;
-  --surface: #0f0f0f;
-  --surface2: #161616;
-  --border: #1e1e1e;
-  --accent: #e8ff47;
-  --accent2: #47ffb8;
-  --text: #efefef;
-  --muted: #444;
-  --error: #ff4757;
-  --warn: #ffa502;
-  --mono: 'IBM Plex Mono', monospace;
-  --display: 'Syne', sans-serif;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PULL</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&family=Syne:wght@700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080808;
+      --surface: #0f0f0f;
+      --surface2: #161616;
+      --border: #1e1e1e;
+      --accent: #e8ff47;
+      --accent2: #47ffb8;
+      --text: #efefef;
+      --muted: #444;
+      --error: #ff4757;
+      --warn: #ffa502;
+      --mono: 'IBM Plex Mono', monospace;
+      --display: 'Syne', sans-serif;
+    }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--mono);
-  min-height: 100vh;
-  cursor: crosshair;
-}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      min-height: 100vh;
+      cursor: crosshair;
+    }
 
-/* grid background */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(232,255,71,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(232,255,71,0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
+    /* grid background */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232, 255, 71, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232, 255, 71, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-.wrap {
-  position: relative;
-  z-index: 1;
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 0 24px 64px;
-}
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
 
-/* ── HEADER ── */
-header {
-  padding: 32px 0 24px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 40px;
-}
+    /* ── HEADER ── */
+    header {
+      padding: 32px 0 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
 
-.logo {
-  font-family: var(--display);
-  font-size: 72px;
-  font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -2px;
-  color: var(--accent);
-  text-shadow: 0 0 60px rgba(232,255,71,0.2);
-  animation: flicker 8s infinite;
-}
+    .logo {
+      font-family: var(--display);
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -2px;
+      color: var(--accent);
+      text-shadow: 0 0 60px rgba(232, 255, 71, 0.2);
+      animation: flicker 8s infinite;
+    }
 
-@keyframes flicker {
-  0%,95%,100% { opacity: 1; }
-  96% { opacity: 0.85; }
-  97% { opacity: 1; }
-  98% { opacity: 0.9; }
-}
+    @keyframes flicker {
 
-.header-meta {
-  text-align: right;
-}
+      0%,
+      95%,
+      100% {
+        opacity: 1;
+      }
 
-.header-meta p {
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted);
-  line-height: 1.8;
-}
+      96% {
+        opacity: 0.85;
+      }
 
-.online-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--accent2);
-}
+      97% {
+        opacity: 1;
+      }
 
-.online-badge.offline { color: var(--error); }
+      98% {
+        opacity: 0.9;
+      }
+    }
 
-.pulse {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: blink 1.4s infinite;
-}
+    .header-meta {
+      text-align: right;
+    }
 
-@keyframes blink {
-  0%,100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.2; transform: scale(0.8); }
-}
+    .header-meta p {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.8;
+    }
 
-/* ── INPUT AREA ── */
-.input-block {
-  margin-bottom: 32px;
-}
+    .online-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
 
-.field-label {
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
-  display: block;
-}
+    .online-badge.offline {
+      color: var(--error);
+    }
 
-.url-bar {
-  display: flex;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  margin-bottom: 12px;
-}
+    .pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: blink 1.4s infinite;
+    }
 
-.url-bar:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(232,255,71,0.08);
-}
+    @keyframes blink {
 
-.url-bar input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 13px;
-  padding: 15px 18px;
-}
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
 
-.url-bar input::placeholder { color: var(--muted); }
+      50% {
+        opacity: 0.2;
+        transform: scale(0.8);
+      }
+    }
 
-.pull-btn {
-  background: var(--accent);
-  color: #000;
-  border: none;
-  font-family: var(--display);
-  font-size: 22px;
-  font-weight: 800;
-  padding: 0 32px;
-  cursor: crosshair;
-  letter-spacing: 1px;
-  transition: background 0.15s, transform 0.1s;
-  flex-shrink: 0;
-}
+    /* ── INPUT AREA ── */
+    .input-block {
+      margin-bottom: 32px;
+    }
 
-.pull-btn:hover { background: #f5ff6e; }
-.pull-btn:active { transform: scale(0.97); }
-.pull-btn:disabled {
-  background: var(--border);
-  color: var(--muted);
-  cursor: not-allowed;
-  transform: none;
-}
+    .field-label {
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: block;
+    }
 
-.hint {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
+    .url-bar {
+      display: flex;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 12px;
+    }
 
-.hint span { color: var(--accent2); }
+    .url-bar:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(232, 255, 71, 0.08);
+    }
 
-/* ── JOB LIST ── */
-.section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
+    .url-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 15px 18px;
+    }
 
-.section-title {
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+    .url-bar input::placeholder {
+      color: var(--muted);
+    }
 
-.clear-btn {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 5px 12px;
-  cursor: crosshair;
-  transition: all 0.15s;
-}
+    .pull-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      font-family: var(--display);
+      font-size: 22px;
+      font-weight: 800;
+      padding: 0 32px;
+      cursor: crosshair;
+      letter-spacing: 1px;
+      transition: background 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
 
-.clear-btn:hover { border-color: var(--muted); color: var(--text); }
+    .pull-btn:hover {
+      background: #f5ff6e;
+    }
 
-.jobs { margin-bottom: 40px; }
+    .pull-btn:active {
+      transform: scale(0.97);
+    }
 
-.empty {
-  border: 1px dashed var(--border);
-  padding: 40px;
-  text-align: center;
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+    .pull-btn:disabled {
+      background: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+      transform: none;
+    }
 
-.job-card {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  margin-bottom: 8px;
-  overflow: hidden;
-  animation: cardIn 0.25s ease;
-}
+    .hint {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
 
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    .hint span {
+      color: var(--accent2);
+    }
 
-.job-card.running { border-color: var(--accent); }
-.job-card.done { border-color: #1a2200; }
-.job-card.error { border-color: #2a0a0a; }
+    /* ── JOB LIST ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
 
-.job-header {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  gap: 12px;
-  cursor: pointer;
-  user-select: none;
-}
+    .section-title {
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
 
-.job-indicator {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+    .clear-btn {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 5px 12px;
+      cursor: crosshair;
+      transition: all 0.15s;
+    }
 
-.running .job-indicator { background: var(--accent); animation: blink 0.8s infinite; }
-.done .job-indicator { background: var(--accent2); }
-.error .job-indicator { background: var(--error); }
-.queued .job-indicator { background: var(--muted); }
+    .clear-btn:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
 
-.job-url {
-  flex: 1;
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--text);
-}
+    .jobs {
+      margin-bottom: 40px;
+    }
 
-.job-badge {
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border: 1px solid currentColor;
-  flex-shrink: 0;
-}
+    .empty {
+      border: 1px dashed var(--border);
+      padding: 40px;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
 
-.running .job-badge { color: var(--accent); }
-.done .job-badge { color: var(--accent2); }
-.error .job-badge { color: var(--error); }
-.queued .job-badge { color: var(--muted); }
+    .job-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      margin-bottom: 8px;
+      overflow: hidden;
+      animation: cardIn 0.25s ease;
+    }
 
-.job-toggle {
-  font-size: 10px;
-  color: var(--muted);
-  flex-shrink: 0;
-  transition: transform 0.2s;
-}
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
 
-.job-toggle.open { transform: rotate(180deg); }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-.job-log {
-  display: none;
-  background: var(--surface2);
-  border-top: 1px solid var(--border);
-  padding: 12px 16px;
-  max-height: 240px;
-  overflow-y: auto;
-  font-size: 11px;
-  line-height: 1.9;
-}
+    .job-card.running {
+      border-color: var(--accent);
+    }
 
-.job-log.visible { display: block; }
-.job-log::-webkit-scrollbar { width: 3px; }
-.job-log::-webkit-scrollbar-thumb { background: var(--border); }
+    .job-card.done {
+      border-color: #1a2200;
+    }
 
-.log-line { display: block; }
-.log-line.info { color: #555; }
-.log-line.progress { color: #888; }
-.log-line.success { color: var(--accent2); }
-.log-line.error { color: var(--error); }
-.log-line.warn { color: var(--warn); }
-.log-line.skip { color: var(--warn); opacity: 0.6; }
-.log-line.debug { color: #333; }
+    .job-card.error {
+      border-color: #2a0a0a;
+    }
 
-/* progress bar under running card */
-.job-progress {
-  height: 2px;
-  background: var(--border);
-  overflow: hidden;
-}
+    .job-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
 
-.job-progress-fill {
-  height: 100%;
-  background: var(--accent);
-  width: 30%;
-  animation: sweep 1.6s ease-in-out infinite;
-}
+    .job-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
 
-@keyframes sweep {
-  0% { transform: translateX(-100%); width: 30%; }
-  50% { width: 60%; }
-  100% { transform: translateX(400%); width: 30%; }
-}
+    .running .job-indicator {
+      background: var(--accent);
+      animation: blink 0.8s infinite;
+    }
 
-/* ── ARCHIVE STRIP ── */
-.archive-strip {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 8px;
-}
+    .done .job-indicator {
+      background: var(--accent2);
+    }
 
-.archive-count {
-  font-family: var(--display);
-  font-size: 36px;
-  font-weight: 800;
-  color: var(--accent);
-  line-height: 1;
-}
+    .error .job-indicator {
+      background: var(--error);
+    }
 
-.archive-meta p {
-  font-size: 9px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted);
-  line-height: 1.8;
-}
-</style>
+    .queued .job-indicator {
+      background: var(--muted);
+    }
+
+    .job-url {
+      flex: 1;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+    }
+
+    .job-badge {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border: 1px solid currentColor;
+      flex-shrink: 0;
+    }
+
+    .running .job-badge {
+      color: var(--accent);
+    }
+
+    .done .job-badge {
+      color: var(--accent2);
+    }
+
+    .error .job-badge {
+      color: var(--error);
+    }
+
+    .queued .job-badge {
+      color: var(--muted);
+    }
+
+    .job-toggle {
+      font-size: 10px;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .job-toggle.open {
+      transform: rotate(180deg);
+    }
+
+    .job-log {
+      display: none;
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      max-height: 240px;
+      overflow-y: auto;
+      font-size: 11px;
+      line-height: 1.9;
+    }
+
+    .job-log.visible {
+      display: block;
+    }
+
+    .job-log::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .job-log::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+
+    .log-line {
+      display: block;
+    }
+
+    .log-line.info {
+      color: #555;
+    }
+
+    .log-line.progress {
+      color: #888;
+    }
+
+    .log-line.success {
+      color: var(--accent2);
+    }
+
+    .log-line.error {
+      color: var(--error);
+    }
+
+    .log-line.warn {
+      color: var(--warn);
+    }
+
+    .log-line.skip {
+      color: var(--warn);
+      opacity: 0.6;
+    }
+
+    .log-line.debug {
+      color: #333;
+    }
+
+    /* progress bar under running card */
+    .job-progress {
+      height: 2px;
+      background: var(--border);
+      overflow: hidden;
+    }
+
+    .job-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 30%;
+      animation: sweep 1.6s ease-in-out infinite;
+    }
+
+    @keyframes sweep {
+      0% {
+        transform: translateX(-100%);
+        width: 30%;
+      }
+
+      50% {
+        width: 60%;
+      }
+
+      100% {
+        transform: translateX(400%);
+        width: 30%;
+      }
+    }
+
+    /* ── ARCHIVE STRIP ── */
+    .archive-strip {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .archive-count {
+      font-family: var(--display);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .archive-meta p {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    /* ── ARCHIVE EDITOR ── */
+    .archive-section {
+      margin-top: 32px;
+    }
+
+    .archive-search {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .archive-search:focus {
+      border-color: var(--accent);
+    }
+
+    .archive-search::placeholder {
+      color: var(--muted);
+    }
+
+    .archive-list {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .archive-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .archive-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+
+    .archive-entry {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    .archive-entry:last-child {
+      border-bottom: none;
+    }
+
+    .archive-entry:hover {
+      background: var(--surface2);
+    }
+
+    .archive-entry.selected {
+      background: rgba(232, 255, 71, 0.04);
+    }
+
+    .entry-check {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      flex-shrink: 0;
+      cursor: pointer;
+      appearance: none;
+      position: relative;
+      transition: border-color 0.15s;
+    }
+
+    .entry-check:checked {
+      border-color: var(--error);
+      background: rgba(255, 71, 87, 0.15);
+    }
+
+    .entry-check:checked::after {
+      content: '×';
+      position: absolute;
+      top: -3px;
+      left: 2px;
+      color: var(--error);
+      font-size: 12px;
+      font-family: var(--mono);
+    }
+
+    .entry-id {
+      font-size: 11px;
+      color: var(--accent2);
+      flex-shrink: 0;
+      width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .entry-title {
+      font-size: 11px;
+      color: var(--text);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .entry-source {
+      font-size: 10px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .archive-toolbar {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .selected-count {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      margin-left: auto;
+    }
+
+    .selected-count span {
+      color: var(--error);
+    }
+
+    .btn-danger {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid var(--error);
+      color: var(--error);
+      padding: 5px 12px;
+      cursor: crosshair;
+      transition: all 0.15s;
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 71, 87, 0.1);
+    }
+
+    .btn-danger:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .archive-empty {
+      padding: 32px;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+  </style>
 </head>
+
 <body>
-<div class="wrap">
+  <div class="wrap">
 
-  <header>
-    <div class="logo">PULL</div>
-    <div class="header-meta">
-      <p>yt-dlp music downloader</p>
-      <p>navidrome</p>
-      <br>
-      <span class="online-badge" id="badge">
-        <span class="pulse"></span>
-        connecting...
-      </span>
-    </div>
-  </header>
+    <header>
+      <div class="logo">PULL</div>
+      <div class="header-meta">
+        <p>yt-dlp music downloader</p>
+        <p>navidrome</p>
+        <br>
+        <span class="online-badge" id="badge">
+          <span class="pulse"></span>
+          connecting...
+        </span>
+      </div>
+    </header>
 
-  <div class="input-block">
-    <label class="field-label">YouTube URL — video, playlist, or channel</label>
-    <div class="url-bar">
-      <input type="text" id="urlInput" placeholder="https://youtube.com/playlist?list=..." autocomplete="off" />
-      <button class="pull-btn" id="pullBtn" onclick="startDownload()">PULL</button>
+    <div class="input-block">
+      <label class="field-label">YouTube URL — video, playlist, or channel</label>
+      <div class="url-bar">
+        <input type="text" id="urlInput" placeholder="https://youtube.com/playlist?list=..." autocomplete="off" />
+        <button class="pull-btn" id="pullBtn" onclick="startDownload()">PULL</button>
+      </div>
+      <p class="hint">supports <span>videos</span> · <span>playlists</span> · <span>channels</span> · archive prevents
+        re-downloads</p>
     </div>
-    <p class="hint">supports <span>videos</span> · <span>playlists</span> · <span>channels</span> · archive prevents re-downloads</p>
-  </div>
 
-  <div class="jobs">
-    <div class="section-head">
-      <span class="section-title">Jobs</span>
-      <button class="clear-btn" onclick="clearDone()">Clear done</button>
-    </div>
-    <div id="jobList">
-      <div class="empty" id="emptyState">no jobs yet — paste a url above</div>
-    </div>
-  </div>
-
-  <div>
-    <div class="section-head">
-      <span class="section-title">Archive</span>
-      <button class="clear-btn" onclick="loadArchive()">Refresh</button>
-    </div>
-    <div class="archive-strip">
-      <div class="archive-count" id="archiveCount">—</div>
-      <div class="archive-meta">
-        <p>tracks in archive</p>
-        <p>already-downloaded songs are skipped</p>
+    <div class="jobs">
+      <div class="section-head">
+        <span class="section-title">Jobs</span>
+        <button class="clear-btn" onclick="clearDone()">Clear done</button>
+      </div>
+      <div id="jobList">
+        <div class="empty" id="emptyState">no jobs yet — paste a url above</div>
       </div>
     </div>
+
+    <div>
+      <div class="section-head">
+        <span class="section-title">Archive</span>
+        <button class="clear-btn" onclick="loadArchive()">Refresh</button>
+      </div>
+      <div class="archive-strip">
+        <div class="archive-count" id="archiveCount">—</div>
+        <div class="archive-meta">
+          <p>tracks in archive</p>
+          <p>already-downloaded songs are skipped</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="archive-section">
+      <div class="section-head">
+        <span class="section-title">Archive Editor</span>
+      </div>
+      <input class="archive-search" id="archiveSearch" placeholder="search by title or video id..."
+        oninput="filterEntries()" />
+      <div class="archive-list" id="archiveList">
+        <div class="archive-empty">loading archive...</div>
+      </div>
+      <div class="archive-toolbar">
+        <button class="clear-btn" onclick="selectAll()">Select all</button>
+        <button class="clear-btn" onclick="selectNone()">Select none</button>
+        <button class="btn-danger" id="deleteBtn" onclick="deleteSelected()" disabled>Remove selected</button>
+        <span class="selected-count" id="selectedCount"><span>0</span> selected</span>
+      </div>
+    </div>
+
   </div>
 
-</div>
+  <script>
+    const API = window.location.origin;
+    const jobs = [];
+    let archiveEntries = [];
 
-<script>
-const API = window.location.origin;
-const jobs = [];
+    // ── health check ──
+    async function checkHealth() {
+      const badge = document.getElementById('badge');
+      try {
+        const r = await fetch(`${API}/health`, { signal: AbortSignal.timeout(3000) });
+        if (r.ok) {
+          badge.className = 'online-badge';
+          badge.innerHTML = '<span class="pulse"></span> online';
+        } else throw new Error();
+      } catch {
+        badge.className = 'online-badge offline';
+        badge.innerHTML = '<span class="pulse"></span> offline';
+      }
+    }
 
-// ── health check ──
-async function checkHealth() {
-  const badge = document.getElementById('badge');
-  try {
-    const r = await fetch(`${API}/health`, { signal: AbortSignal.timeout(3000) });
-    if (r.ok) {
-      badge.className = 'online-badge';
-      badge.innerHTML = '<span class="pulse"></span> online';
-    } else throw new Error();
-  } catch {
-    badge.className = 'online-badge offline';
-    badge.innerHTML = '<span class="pulse"></span> offline';
-  }
-}
+    // ── archive ──
+    async function loadArchive() {
+      try {
+        const r = await fetch(`${API}/archive`);
+        const d = await r.json();
+        document.getElementById('archiveCount').textContent = d.count;
+        archiveEntries = d.entries || [];
+        renderEntries(archiveEntries);
+      } catch { }
+    }
 
-// ── archive ──
-async function loadArchive() {
-  try {
-    const r = await fetch(`${API}/archive`);
-    const d = await r.json();
-    document.getElementById('archiveCount').textContent = d.count;
-  } catch {}
-}
+    function renderEntries(entries) {
+      const list = document.getElementById('archiveList');
+      if (!entries.length) {
+        list.innerHTML = '<div class="archive-empty">archive is empty</div>';
+        return;
+      }
+      list.innerHTML = entries.map((e) => {
+        const raw = e.raw || e;
+        const source = e.source || '';
+        const id = e.id || '';
+        const title = e.title || id;
+        const ytUrl = source === 'youtube' ? `https://youtube.com/watch?v=${id}` : '';
+        return `
+      <div class="archive-entry">
+        <input type="checkbox" class="entry-check" data-line="${raw}" onchange="updateSelected()" />
+        <span class="entry-source">${source}</span>
+        <span class="entry-id" title="${id}">${id}</span>
+        <span class="entry-title" title="${title}">${title || '—'}</span>
+        ${ytUrl ? `<a href="${ytUrl}" target="_blank" style="color:var(--muted);font-size:10px;text-decoration:none;flex-shrink:0" title="open in youtube">↗</a>` : ''}
+      </div>`;
+      }).join('');
+    }
 
-// ── download ──
-async function startDownload() {
-  const input = document.getElementById('urlInput');
-  const url = input.value.trim();
-  if (!url) return;
+    function filterEntries() {
+      const q = document.getElementById('archiveSearch').value.toLowerCase();
+      if (!q) { renderEntries(archiveEntries); return; }
+      const filtered = archiveEntries.filter(e => {
+        const raw = typeof e === 'string' ? e : (e.raw + ' ' + e.title);
+        return raw.toLowerCase().includes(q);
+      });
+      renderEntries(filtered);
+    }
 
-  const btn = document.getElementById('pullBtn');
-  btn.disabled = true;
+    function updateSelected() {
+      const checked = document.querySelectorAll('.entry-check:checked');
+      const count = checked.length;
+      document.getElementById('selectedCount').querySelector('span').textContent = count;
+      document.getElementById('deleteBtn').disabled = count === 0;
+    }
 
-  let jobId, jobEl;
+    function selectAll() {
+      document.querySelectorAll('.entry-check').forEach(c => c.checked = true);
+      updateSelected();
+    }
 
-  try {
-    const r = await fetch(`${API}/download`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
-    });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error || 'failed');
+    function selectNone() {
+      document.querySelectorAll('.entry-check').forEach(c => c.checked = false);
+      updateSelected();
+    }
 
-    jobId = d.job_id;
-    input.value = '';
+    async function deleteSelected() {
+      const checked = [...document.querySelectorAll('.entry-check:checked')];
+      if (!checked.length) return;
+      const lines = checked.map(c => c.dataset.line);
+      const btn = document.getElementById('deleteBtn');
+      btn.disabled = true;
+      btn.textContent = 'removing...';
+      try {
+        // delete one by one using the raw endpoint
+        for (const raw of lines) {
+          await fetch(`${API}/archive/delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ raw })
+          });
+        }
+        await loadArchive();
+        document.getElementById('archiveSearch').value = '';
+        updateSelected();
+      } catch (err) {
+        alert('Error: ' + err.message);
+      } finally {
+        btn.textContent = 'Remove selected';
+        btn.disabled = false;
+      }
+    }
 
-    // create card
-    jobEl = createJobCard(jobId, url);
-    document.getElementById('emptyState')?.remove();
+    // ── download ──
+    async function startDownload() {
+      const input = document.getElementById('urlInput');
+      const url = input.value.trim();
+      if (!url) return;
 
-    // stream logs
-    streamJob(jobId, jobEl);
+      const btn = document.getElementById('pullBtn');
+      btn.disabled = true;
 
-  } catch (err) {
-    alert('Error: ' + err.message);
-  } finally {
-    btn.disabled = false;
-  }
-}
+      let jobId, jobEl;
 
-function createJobCard(jobId, url) {
-  const card = document.createElement('div');
-  card.className = 'job-card running';
-  card.id = `job-${jobId}`;
-  card.innerHTML = `
+      try {
+        const r = await fetch(`${API}/download`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || 'failed');
+
+        jobId = d.job_id;
+        input.value = '';
+
+        // create card
+        jobEl = createJobCard(jobId, url);
+        document.getElementById('emptyState')?.remove();
+
+        // stream logs
+        streamJob(jobId, jobEl);
+
+      } catch (err) {
+        alert('Error: ' + err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function createJobCard(jobId, url) {
+      const card = document.createElement('div');
+      card.className = 'job-card running';
+      card.id = `job-${jobId}`;
+      card.innerHTML = `
     <div class="job-header" onclick="toggleLog('${jobId}')">
       <div class="job-indicator"></div>
       <div class="job-url">${url}</div>
@@ -500,81 +894,82 @@ function createJobCard(jobId, url) {
     <div class="job-progress"><div class="job-progress-fill"></div></div>
     <div class="job-log visible" id="log-${jobId}"></div>
   `;
-  document.getElementById('jobList').prepend(card);
-  jobs.unshift({ jobId, url, status: 'running' });
-  return card;
-}
-
-function toggleLog(jobId) {
-  const log = document.getElementById(`log-${jobId}`);
-  const toggle = document.getElementById(`toggle-${jobId}`);
-  log.classList.toggle('visible');
-  toggle.classList.toggle('open');
-}
-
-function appendLog(jobId, line, level) {
-  const log = document.getElementById(`log-${jobId}`);
-  if (!log) return;
-  const span = document.createElement('span');
-  span.className = `log-line ${level}`;
-  span.textContent = `[${new Date().toLocaleTimeString('en-US',{hour12:false})}] ${line}`;
-  log.appendChild(span);
-  log.appendChild(document.createElement('br'));
-  log.scrollTop = log.scrollHeight;
-}
-
-function streamJob(jobId, card) {
-  const es = new EventSource(`${API}/stream/${jobId}`);
-
-  es.onmessage = (e) => {
-    const data = JSON.parse(e.data);
-
-    if (data.done) {
-      es.close();
-      const status = data.status;
-      card.className = `job-card ${status}`;
-      card.querySelector('.job-badge').textContent = status;
-      card.querySelector('.job-progress')?.remove();
-      loadArchive();
-      checkHealth();
-      return;
+      document.getElementById('jobList').prepend(card);
+      jobs.unshift({ jobId, url, status: 'running' });
+      return card;
     }
 
-    appendLog(jobId, data.line, data.level || 'info');
-  };
-
-  es.onerror = () => {
-    es.close();
-    const card = document.getElementById(`job-${jobId}`);
-    if (card && card.classList.contains('running')) {
-      card.className = 'job-card error';
-      card.querySelector('.job-badge').textContent = 'error';
-      card.querySelector('.job-progress')?.remove();
-      appendLog(jobId, 'connection to backend lost', 'error');
+    function toggleLog(jobId) {
+      const log = document.getElementById(`log-${jobId}`);
+      const toggle = document.getElementById(`toggle-${jobId}`);
+      log.classList.toggle('visible');
+      toggle.classList.toggle('open');
     }
-  };
-}
 
-function clearDone() {
-  document.querySelectorAll('.job-card.done, .job-card.error').forEach(el => el.remove());
-  if (!document.querySelector('.job-card')) {
-    const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.id = 'emptyState';
-    empty.textContent = 'no jobs yet — paste a url above';
-    document.getElementById('jobList').appendChild(empty);
-  }
-}
+    function appendLog(jobId, line, level) {
+      const log = document.getElementById(`log-${jobId}`);
+      if (!log) return;
+      const span = document.createElement('span');
+      span.className = `log-line ${level}`;
+      span.textContent = `[${new Date().toLocaleTimeString('en-US', { hour12: false })}] ${line}`;
+      log.appendChild(span);
+      log.appendChild(document.createElement('br'));
+      log.scrollTop = log.scrollHeight;
+    }
 
-// enter key
-document.getElementById('urlInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') startDownload();
-});
+    function streamJob(jobId, card) {
+      const es = new EventSource(`${API}/stream/${jobId}`);
 
-// init
-checkHealth();
-loadArchive();
-setInterval(loadArchive, 30000);
-</script>
+      es.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+
+        if (data.done) {
+          es.close();
+          const status = data.status;
+          card.className = `job-card ${status}`;
+          card.querySelector('.job-badge').textContent = status;
+          card.querySelector('.job-progress')?.remove();
+          loadArchive();
+          checkHealth();
+          return;
+        }
+
+        appendLog(jobId, data.line, data.level || 'info');
+      };
+
+      es.onerror = () => {
+        es.close();
+        const card = document.getElementById(`job-${jobId}`);
+        if (card && card.classList.contains('running')) {
+          card.className = 'job-card error';
+          card.querySelector('.job-badge').textContent = 'error';
+          card.querySelector('.job-progress')?.remove();
+          appendLog(jobId, 'connection to backend lost', 'error');
+        }
+      };
+    }
+
+    function clearDone() {
+      document.querySelectorAll('.job-card.done, .job-card.error').forEach(el => el.remove());
+      if (!document.querySelector('.job-card')) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.id = 'emptyState';
+        empty.textContent = 'no jobs yet — paste a url above';
+        document.getElementById('jobList').appendChild(empty);
+      }
+    }
+
+    // enter key
+    document.getElementById('urlInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') startDownload();
+    });
+
+    // init
+    checkHealth();
+    loadArchive();
+    setInterval(loadArchive, 30000);
+  </script>
 </body>
+
 </html>
